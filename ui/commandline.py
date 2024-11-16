@@ -18,7 +18,7 @@ class Cli(Cmd):
         line =line.split()
         self.stdout.write(f"Unknown command: {colored(line[0],'red')}\n")
 
-    def do_prompt(self, new_prompt) -> None:
+    def do_prompt(self, new_prompt:str) -> None:
         return None
     
     def do_get(self,line):
