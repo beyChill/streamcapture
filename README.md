@@ -7,10 +7,11 @@ Python access to chaturbate streams and stuff.
 Platform: Fedora
 See pyproject.toml
 
-## Usage
-Use the command line actions  
+# Usage
+Primary help: type help or ? at command prompt
 
 Use get comand to capture a model:  
+(command streamer_name site_abbreviation)
 get ann__w cb
 
 change default prompt minimized typing the site abbreviation
