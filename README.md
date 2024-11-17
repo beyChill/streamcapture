@@ -1,11 +1,11 @@
-# Sreamer Capture
+# Streamer Capture
 Python access to chaturbate streams and stuff.  
 
 ### Inspiration [StreaMonitor](https://github.com/lossless1024/StreaMonitor)
 
 ## Requirements
-See pyproject.toml for installs
-Platform used... Fedora
+Platform: Fedora
+See pyproject.toml
 
 ## Usage
 Use the command line actions  
