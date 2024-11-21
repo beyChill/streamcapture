@@ -14,16 +14,16 @@ class GetDataError(Exception):
     ERROR_RESPONSE: Dict[str, str] = field(init=False)
 
     def __post_init__(self):
-        self.pre_text = f"{colored("[FAIL] " + strftime("%H:%M:%S") ,'red')}: (Code: {self.code}) module: {self.loader} \n\t"
+        self.pre_text = f"{colored("[FAIL]",'red')} {strftime("%H:%M:%S")}: (http code: {self.code}) module: {self.loader} \n\t"
         self.ERROR_RESPONSE = {
-            "429": f"{self.pre_text}Chaturbate {colored('API overan','red')} with too many request",
-            "not200": f"{self.pre_text}Unable to retrieve stream data for {colored(self.name_,'red')}",
-            "notfound": f"{self.pre_text}{colored(self.name_,'red')} is not a Chaturbate Streamer",
+            "429": f"Chaturbate {colored('API overan','red')} with too many request",
+            "not200": f"Unable to retrieve stream data for {colored(self.name_,'red')}",
+            "notfound": f"{colored(self.name_,'red')} is not a Chaturbate Streamer",
         }
 
     def __str__(self):
-        error = self.ERROR_RESPONSE.get(
-            self.key_, f"{colored("An unexpected error has occured",'red')}"
+        error:str = self.ERROR_RESPONSE.get(
+            self.key_, colored("An unexpected error has occured", "red")
         )
         return self.pre_text + error
 
@@ -38,7 +38,7 @@ class CliErrors(Exception):
 
     def __post_init__(self):
         self.pre_text = (
-            f"{colored("[FAIL] " + strftime("%H:%M:%S") ,'red')}: {self.hint} \n\t"
+            f"{colored("[FAIL]") ,'red'}{strftime("%H:%M:%S")}: {self.hint} \n\t"
         )
         self.ERROR_RESPONSE = {
             "input": f"Command missing {colored('model name','red')} and {colored('site abbreviation','red')}",
@@ -50,5 +50,7 @@ class CliErrors(Exception):
         }
 
     def __str__(self):
-        error = self.ERROR_RESPONSE.get(self.key_)
+        error: str = self.ERROR_RESPONSE.get(
+            self.key_, colored("An unexpected error has occured", "red")
+        )
         return self.pre_text + error
