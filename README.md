@@ -16,6 +16,12 @@ get ann__w cb
 
 change default prompt minimized typing the site abbreviation
 
+### PRAGMA
+#### Creation
+
+#### Connection
+PRAGMA cache_size;
+
 ## Run
 In the root directory run... python main.py
 
