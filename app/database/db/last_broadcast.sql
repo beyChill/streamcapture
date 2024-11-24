@@ -1,1 +1,0 @@
-UPDATE chaturbate SET last_broadcast=datetime(last_broadcast,'unixepoch') WHERE last_broadcast like '173%'
