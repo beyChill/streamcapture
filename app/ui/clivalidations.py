@@ -99,8 +99,8 @@ class CliValidations:
     @classmethod
     def check_sort(cls, sort: str):
         if sort not in cls.SORT_OPTIONS:
-            options=[]
-            for k,_ in cls.SORT_OPTIONS.items():
+            options = []
+            for k, _ in cls.SORT_OPTIONS.items():
                 options.append(k)
 
             raise CliErrors(None, "input_table", f"use one sort option: {options}")
