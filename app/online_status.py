@@ -7,7 +7,7 @@ from time import perf_counter, strftime
 from httpx import AsyncClient
 from tabulate import tabulate
 from termcolor import colored
-from app.database.dbactions import db_follow_offline, db_followed, db_recorded
+from app.database.db_query import db_follow_offline, db_followed, db_recorded
 from app.sites.capture_streamer import CaptureStreamer
 from app.sites.create_streamer import CreateStreamer
 from app.sites.getstreamerurl import get_streamer_url
@@ -154,10 +154,10 @@ async def get_online_streamers() -> None:
     PrintTables.has_shown = True
 
     if len(online) > 0:
-        streamer_wUrl = await get_streamer_url(online)
-        cap_streamers = [CreateStreamer(*x).return_data for x in streamer_wUrl]
+        streamer_data = await get_streamer_url(online)
+        cap_streamers = [CreateStreamer(*x).return_data for x in streamer_data]
 
-        [CaptureStreamer(x) for x in cap_streamers if isinstance(x, Iterable)]
+        _=[CaptureStreamer(x) for x in cap_streamers if isinstance(x, Iterable)]
 
     return None
 

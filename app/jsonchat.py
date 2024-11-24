@@ -1,16 +1,16 @@
 import asyncio
+import math
 from datetime import timedelta
 from logging import getLogger
-import math
-import pandas as pd
-from time import perf_counter, strftime
-from httpx import AsyncClient
 from random import choice, shuffle, uniform
 from string import ascii_lowercase
+from time import perf_counter, strftime
 
+import pandas as pd
+from httpx import AsyncClient
 from termcolor import colored
 
-from app.database.dbactions import db_num_online, db_update_streamers
+from app.database.db_writes import db_num_online, db_update_streamers
 from app.utils.constants import HEADERS_JSON
 
 log = getLogger(__name__)
@@ -21,7 +21,7 @@ def random_id(length) -> str:
     return "".join(choice(letters) for _ in range(length)) + "a9a9ab8b8"
 
 
-def removeDuplicates(list_):
+def remove_duplicates(list_):
     return list(set([i for i in list_]))
 
 
@@ -63,7 +63,7 @@ async def process_urls(i: int, num_batches: int, urls: list[str]) -> None:
     remove_next = sum(list(results), [])
     list_to_tuple = [tuple(elem) for elem in remove_next]
 
-    undupe = removeDuplicates(list_to_tuple)
+    undupe = remove_duplicates(list_to_tuple)
 
     log.debug(
         f"Processed {colored(len(list_to_tuple),"green")} streamers in: {colored(round(perf_counter() - start_,4), 'green')} seconds"
@@ -97,7 +97,8 @@ async def get_num_online(base_url: str) -> int:
     async with AsyncClient(headers=HEADERS_JSON, http2=True) as client:
         response = await client.get(offset)
         if response.status_code != 200:
-            return colored(f"-{response.status_code}", "red")
+            log.error(colored(f"-{response.status_code}", "red"))
+            return 0
 
         #   cookie = response.cookies
         streamers_online: int = response.json()["total_count"]
@@ -159,7 +160,7 @@ async def json_scraping() -> None:
 
     num_batches = len(url_groups)
 
-    [await process_urls(i, num_batches, batch) for i, batch in enumerate(url_groups)]
+    _=[await process_urls(i, num_batches, batch) for i, batch in enumerate(url_groups)]
 
     return None
 
