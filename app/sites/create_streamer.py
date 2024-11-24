@@ -5,9 +5,12 @@ from pathlib import Path
 from time import strftime
 from termcolor import colored
 from app.config.settings import get_settings
-from app.database.dbactions import db_add_streamer
-from app.utils.constants import StreamerData, Streamer
+
+
 from collections.abc import Callable
+
+from app.database.db_writes import db_add_streamer
+from app.utils.named_tuples import StreamerData
 
 
 log = getLogger(__name__)
@@ -17,7 +20,8 @@ config = get_settings()
 @dataclass(slots=True)
 class FileSvs:
 
-    def set_video_path(self, name_, site, dir=config.VIDEO_DIR) -> Path:
+    @classmethod
+    def set_video_path(cls, name_, site, dir=config.VIDEO_DIR) -> Path:
         save_dir = Path(dir, site, name_).joinpath()
         return save_dir
 
@@ -28,29 +32,30 @@ class FileSvs:
 
 
 @dataclass(slots=True, eq=False)
-class CreateStreamer:
+class CreateStreamer(FileSvs):
     name_: str
     success: bool
-    url: str
+    url: str | None
+    domain: str | None
     room_status: str
     status_code: int
     site_slug: str = field(init=False, default="CB")
     site_name: str = field(init=False, default="Chaturbate")
-    path_: Path = field(default=None, init=False)
-    filename: str = field(default=None, init=False)
+    path_: Path = field(init=False)
+    filename: str = field(init=False)
     file_svs: Callable = field(init=False)
-    metadata: list = field(default=None, init=False)
-    return_data: StreamerData = field(default=None, init=False)
+    metadata: list = field(init=False)
+    return_data: StreamerData = field(init=False)
 
-    def __post_init__(self, filesvs=lambda: FileSvs()) -> StreamerData | None:
+    def __post_init__(self) -> StreamerData | None:
 
-        self.file_svs = filesvs()
+        # self.file_svs = filesvs()
 
         if not bool(self.success):
             log.error(f"{self.name_} is not a {self.site_name} streamer")
             return self.return_streamer()
 
-        db_add_streamer(self.name_)
+        db_add_streamer(self.name_, self.domain)
 
         if not bool(self.url) and self.status_code == 200:
             log.info(
@@ -60,10 +65,19 @@ class CreateStreamer:
                 )
             )
 
-        self.path_ = self.file_svs.set_video_path(self.name_, self.site_name)
-        self.filename = self.file_svs.set_filename(self.name_, self.site_slug)
+        self.path_ = self.set_video_path(self.name_, self.site_name)
+        self.filename = self.set_filename(self.name_, self.site_slug)
         self.metadata = self.set_metadata(self.name_, self.site_name)
-        self.return_streamer()
+        self.return_data = StreamerData(
+            self.name_,
+            self.site_name,
+            self.url,
+            self.domain,
+            self.path_,
+            self.filename,
+            self.metadata,
+            self.success,
+        )
 
         del self
 
@@ -92,13 +106,5 @@ class CreateStreamer:
             metadata.extend(["-metadata", f"{key}={value}"])
         return metadata
 
-    def return_streamer(self) -> StreamerData:
-        self.return_data = StreamerData(
-            self.name_,
-            self.site_name,
-            self.url,
-            self.path_,
-            self.filename,
-            self.metadata,
-            self.success,
-        )
+    def return_streamer(self):
+        return self.return_data
