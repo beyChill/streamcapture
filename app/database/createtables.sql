@@ -19,6 +19,7 @@ detail_date     DEFAULT (datetime('now','localtime')),
 PRIMARY KEY (streamer_name)
 );
 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_streamer ON chaturbate (streamer_name);
 
 CREATE TABLE IF NOT EXISTS num_streamers (
 id     INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,6 +28,12 @@ type_  VARCHAR(10) DEFAULT NULL,
 num_   INTEGER NOT NULL
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS idx_streamer ON chaturbate (streamer_name);
+CREATE TABLE IF NOT EXISTS domains (
+id              INTEGER PRIMARY KEY AUTOINCREMENT,
+streamer_name   VARCHAR(20) NOT NULL,
+domain          VARCHAR(50) NOT NULL
+);
+
+
 
 
