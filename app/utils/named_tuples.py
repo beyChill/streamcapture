@@ -4,7 +4,7 @@ from typing import Any, NamedTuple
 
 class DbFollowBlock(NamedTuple):
     write: bool
-    query: tuple[Any]
+    query: tuple[Any,Any,Any]
 
 
 class HlsQueryResults(NamedTuple):
@@ -17,9 +17,9 @@ class HlsQueryResults(NamedTuple):
 
 
 class Streamer(NamedTuple):
-    name_: str
-    site_slug: str
-    site: str
+    name_: str | None = None
+    site_slug: str | None = None
+    site: str | None = None
 
 
 class StreamerData(NamedTuple):
