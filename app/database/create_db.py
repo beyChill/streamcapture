@@ -28,6 +28,7 @@ prag = [
     "PRAGMA cache_spill",
 ]
 
+
 @contextmanager
 def db_init_connect():
     with sqlite3.connect(DB_PATH) as conn:
@@ -97,5 +98,5 @@ def check_ghost_process() -> None:
             except OSError:
                 db_remove_pid(pid)
                 log.debug("Clearing inactive status for %s", name_)
-    
+
     return None
