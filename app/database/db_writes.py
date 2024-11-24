@@ -3,19 +3,17 @@ import sqlite3
 from contextlib import contextmanager
 from datetime import date, datetime
 from time import strftime
-from typing import Any, Generator
 
 from termcolor import colored
 
 from app.config.settings import get_settings
 from app.database.db_query import db_cap_status
-from app.log.logger import init_logging
 from app.utils.general_utils import display_pragma
 from app.utils.named_tuples import DbFollowBlock, StreamerWithPid
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
-init_logging()
+
 
 config = get_settings()
 
@@ -49,7 +47,7 @@ def _db_executemany(sql: str, values: list):
             if not isinstance(values, list):
                 write = cursor.execute(sql, values)
         return bool(write)
-    except (sqlite3.Error) as error:
+    except sqlite3.Error as error:
         print(error)
         log.error(error)
 
@@ -123,7 +121,10 @@ def db_add_streamer(name_: str, domain: str | None) -> tuple:
 
 def db_num_online(type_: str, data: int):
     sql = "INSERT INTO num_streamers (type_, num_) VALUES (?, ?)"
-    args = (type_, data,)
+    args = (
+        type_,
+        data,
+    )
     write = _db_execute(sql, args)
     if not write:
         log.error("Failed to add: %s", (colored("online streamers stat", "red")))
@@ -171,5 +172,3 @@ def db_update_streamers(values: list):
         most_viewers=MAX(most_viewers, EXCLUDED.viewers)
         """
     _db_executemany(sql, values)
-
-
